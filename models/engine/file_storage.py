@@ -34,21 +34,6 @@ class FileStorage:
             return new_dict
         return self.__objects
 
-    def get(self, cls, id):
-        """get an object based on its class and id"""
-
-        my_dict = self.all(cls)
-        for obj in my_dict.values():
-            if obj.id == id:
-                return obj
-        return None
-
-    def count(self, cls=None):
-        """counts objects in the database"""
-
-        my_dict = self.all(cls)
-        return (len(my_dict))
-
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
         if obj is not None:
@@ -70,7 +55,7 @@ class FileStorage:
                 jo = json.load(f)
             for key in jo:
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
-        except FileNotFoundError:
+        except:
             pass
 
     def delete(self, obj=None):
@@ -83,3 +68,19 @@ class FileStorage:
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
+
+    def get(self, cls, id):
+        """ retrieves """
+        if cls in classes.values() and id and type(id) == str:
+            d_obj = self.all(cls)
+            for key, value in d_obj.items():
+                if key.split(".")[1] == id:
+                    return value
+        return None
+
+    def count(self, cls=None):
+        """ counts """
+        data = self.all(cls)
+        if cls in classes.values():
+            data = self.all(cls)
+        return len(data)
